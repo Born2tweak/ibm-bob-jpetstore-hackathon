@@ -146,6 +146,7 @@ public class OrderController {
     if (confirmed) {
       if (sessionOrder != null) {
         orderService.insertOrder(sessionOrder);
+        session.removeAttribute("order");
         session.setAttribute("cart", new Cart());
         model.addAttribute("message", "Thank you, your order has been submitted.");
         model.addAttribute("order", sessionOrder);
