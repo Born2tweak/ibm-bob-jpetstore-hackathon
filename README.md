@@ -1,11 +1,25 @@
-# ibmi-cobol-examples
+# IBM Bob hackathon: JPetStore
 
-> **Building with IBM Bob hackathon work in progress.** This repository is a
-> [fork of Jack Woehr's examples](https://github.com/jwoehr/ibmi-cobol-examples).
-> The original examples and their history are preserved under the Apache 2.0
-> license. See [HACKATHON.md](HACKATHON.md) for the team's scope, current
-> verification status, and submission checklist. No hackathon fix or feature
-> has been selected or verified yet.
+**Active submission application:** [JPetStore](jpetstore/README.md), imported from
+[mybatis/jpetstore-6](https://github.com/mybatis/jpetstore-6) at commit
+`1ffdf1e91b62aa32abfc4511f548c9bdc84b9bbf`. The imported code remains
+upstream code under its own [LICENSE](jpetstore/LICENSE) and
+[NOTICE](jpetstore/NOTICE). The import and these planning documents are Codex
+preparation, not IBM Bob work. No Bob-assisted fix or feature is claimed yet.
+
+Open this repository in Bob, then work in `jpetstore/`. See
+[HACKATHON.md](HACKATHON.md), [SPEC.md](SPEC.md), and
+[VERIFICATION.md](VERIFICATION.md) for scope and evidence.
+
+## Prior IBM i exploration
+
+The existing IBM i COBOL examples and their Git history remain below. They
+were an earlier hackathon direction and are not the active submission app.
+
+This repository began as a
+[fork of Jack Woehr's examples](https://github.com/jwoehr/ibmi-cobol-examples).
+The original examples and their history remain under the root Apache 2.0
+license. The following sections describe that prior IBM i work.
 
 Examples of programming COBOL on the [IBM i](https://www.ibm.com/products/ibm-i) platform using [IBM Bob](https://bob.ibm.com/) agentic code assist - **These are examples, and are not production code**. See LICENSE for limit of liability.
 
