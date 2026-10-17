@@ -46,15 +46,15 @@ Before the fix, the successful confirmation left `session["order"]` in the sessi
 The controller is intended to allow a fresh checkout cycle in the same session. The updated regression suite checks both cases through direct Java method calls; it does not dispatch HTTP requests or render JSPs:
 
 - `replayConfirmPostInSameSessionMustNotInsertDuplicateOrder` — second confirmation does not add order or line-item rows or decrement inventory again.
-- `secondLegitimateOrderInSameSessionIsAccepted` — a later order in the same session is intended to be accepted; the updated test result is pending.
+- `secondLegitimateOrderInSameSessionIsAccepted` — a later order in the same session is accepted; fresh CI checks its order, line-item and inventory effects.
 
 ## Evidence map
 
 | Claim | Evidence |
 |---|---|
-| The replay path could insert twice before the fix | Before-fix Failsafe failure recorded in [VERIFICATION.md](VERIFICATION.md) |
+| The replay path could insert twice before the fix | Historical failure plus fresh CI sensitivity failure recorded in [VERIFICATION.md](VERIFICATION.md) |
 | The fix blocks sequential replay after successful completion | `OrderControllerDuplicateOrderIT`, after-fix run recorded in [VERIFICATION.md](VERIFICATION.md) |
-| A later new-session order worked in the historical run; updated same-session check pending | `secondLegitimateOrderInSameSessionIsAccepted` |
+| A later order works in the same session | `secondLegitimateOrderInSameSessionIsAccepted` |
 | Existing unit tests remain green | 98-test Surefire result recorded in [VERIFICATION.md](VERIFICATION.md) |
 | Bob's contribution | Not inferable from source or commit alone; record supported details in [BOB_WORKLOG.md](BOB_WORKLOG.md) |
 

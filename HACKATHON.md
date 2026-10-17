@@ -15,7 +15,7 @@ Sources: [official event page](https://hackathon.angelhack.com/web/events/buildi
 | Explore, Fix, and Build student track | Existing JPetStore application; reproduced issue and committed fix | Implement one useful feature; documenting the fix alone does not satisfy the build step |
 | Bob adoption (30%) | Bob was configured and used according to the team conversation | Record actual Bob prompts/actions, human corrections, commits and outcomes in BOB_WORKLOG.md |
 | Relevance/innovation (30%) | Concrete repeated-business-effect problem | Demonstrate a related useful capability and explain its user value |
-| Functionality/execution (30%) | October 14 reports: 98 unit tests and 2 targeted integration tests passed | Fresh test run, real HTTP/browser checkout, and externally accessible live app |
+| Functionality/execution (30%) | Fresh JDK 21 CI: 98 unit tests, 2 targeted integration tests and WAR packaging passed; removing the fix caused the expected assertion failure | Real HTTP/browser checkout and externally accessible live app |
 | Clarity (10%) | README and architecture map exist | Align the final story with observed behavior and actual Bob contribution |
 | Submission package | Source, spec and historical verification in GitHub | Live URL, PDF deck, YouTube video at most 3 minutes, description at most 100 words, track/stack, in-window improvements |
 
@@ -27,11 +27,11 @@ The production diff against the imported baseline is exactly one added line: rem
 
 The regression invokes controller methods directly using MockHttpSession and the real transaction-managed service/MyBatis/HSQLDB. It checks sequential replay after the first request completes. It does not test servlet dispatch, form binding, JSP rendering, browser behavior, or simultaneous confirmations. Do not claim general idempotency or concurrent double-submit protection.
 
-The repeat-purchase test has been tightened to reuse the same session and check order, line-item and inventory effects. This changed test needs a fresh passing run. The new root-level CI workflow packages the app, runs unit plus targeted integration tests, then verifies that removing the fix causes the expected duplicate-order assertion failure. Nested upstream workflows in jpetstore/.github/ are reference material, not active repository workflows.
+The repeat-purchase test has been tightened to reuse the same session and check order, line-item and inventory effects. The changed test passed in [fresh CI](https://github.com/Born2tweak/ibmi-cobol-hackathon/actions/runs/38985945644). The root-level CI workflow packages the app, runs unit plus targeted integration tests, then verifies that removing the fix causes the expected duplicate-order assertion failure. Nested upstream workflows in jpetstore/.github/ are reference material, not active repository workflows.
 
 ## Immediate work, in order
 
-1. Get fresh CI/local results for the updated test; perform a real checkout, replay, and another checkout in the same browser session.
+1. CI is green for the updated test. Perform a real checkout, replay, and another checkout in the same browser session; direct-method tests do not replace this.
 2. Complete one useful feature. A bounded candidate is recoverable cart-quantity validation: explain invalid input beside the item, retain the prior quantity, allow correction, and preserve the existing below-one removal/backorder behavior. Current source silently ignores nonnumeric input. This is a recommendation, not implemented scope.
 3. Deploy the tested application and check the live flow externally.
 4. Capture actual Bob session evidence. The event page advertises participant Pro+ access during the hackathon; verify redemption with the organizers if the account is still limited to the exhausted trial allowance.

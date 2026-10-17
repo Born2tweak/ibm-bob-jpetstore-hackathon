@@ -85,3 +85,22 @@ Result: blocked before Maven startup by java.net.UnknownHostException: repo.mave
 A root .github/workflows/checkout-regression.yml workflow was prepared to package the app and run the full unit suite plus the two targeted regression tests, then check that removing only the production cleanup line causes the expected replay assertion failure. This sensitivity check changes source only inside its disposable CI runner. Run status must be observed before claiming that workflow passed.
 
 The full browser journey, concurrent confirmation requests, and a live deployment remain unverified.
+
+
+### Fresh GitHub CI results
+
+Tested application/workflow revision: b2cec101e03fa6cd780b324f55b91429fa022821. [Run 38985945644](https://github.com/Born2tweak/ibmi-cobol-hackathon/actions/runs/38985945644), October 16 EDT / October 17 UTC.
+
+The first CI attempt used JDK 17 and stopped at the inherited Enforcer's Java-version check before tests ran. The workflow was corrected to JDK 21 and setup-java v5; the application POM and production code were not changed.
+
+| Check | Result |
+| --- | --- |
+| sh mvnw -B clean package failsafe:integration-test failsafe:verify -Dit.test=OrderControllerDuplicateOrderIT | BUILD SUCCESS; 98 Surefire tests, 0 failures/errors/skips; 2 targeted Failsafe tests, 0 failures/errors/skips; target/jpetstore.war produced |
+| Disposable sensitivity check: remove only the session-cleanup line, recompile, run targeted Failsafe | Expected BUILD FAILURE; 2 tests executed, exactly 1 failure, 0 errors/skips; replay assertion expected ORDERS=3 but observed 4; legitimate same-session purchase still passed |
+| Sensitivity-result validation | Workflow verified a fresh XML report, exact failing test and duplicate-order assertion, and no infrastructure/skipped-test substitute |
+| Independent review | Read-only review found no correctness blocker in the scoped test and CI gate; same-session coverage finding addressed |
+| Production scope | Still exactly the one-line fix compared with the imported baseline; this audit changed tests, documentation and CI only |
+
+Fixed-code and sensitivity reports are separate run artifacts. The intentional failing Maven invocation in the sensitivity step is evidence that the regression catches the defect; the enclosing CI check passed after validating that failure.
+
+Subsequent documentation/rule-only updates do not change the application or tested Java files. HTTP dispatch, JSP/browser behavior, simultaneous requests, and deployed operation remain unverified. These test results establish a narrow fix, not hackathon completeness.
