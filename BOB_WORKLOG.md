@@ -4,7 +4,7 @@ Use this file to make tool contribution auditable. Record only actions supported
 
 ## Project
 
-- Repository: https://github.com/Born2tweak/ibmi-cobol-hackathon
+- Repository: https://github.com/Born2tweak/ibm-bob-jpetstore-hackathon
 - Active branch: `prep/jpetstore-bob`
 - Active app: `jpetstore/`
 - Related fix commit: `192da5039c666c19f3542c0602abe01b44fa18c5`

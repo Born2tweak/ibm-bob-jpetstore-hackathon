@@ -27,7 +27,7 @@ The production diff against the imported baseline is exactly one added line: rem
 
 The regression invokes controller methods directly using MockHttpSession and the real transaction-managed service/MyBatis/HSQLDB. It checks sequential replay after the first request completes. It does not test servlet dispatch, form binding, JSP rendering, browser behavior, or simultaneous confirmations. Do not claim general idempotency or concurrent double-submit protection.
 
-The repeat-purchase test has been tightened to reuse the same session and check order, line-item and inventory effects. The changed test passed in [fresh CI](https://github.com/Born2tweak/ibmi-cobol-hackathon/actions/runs/38985945644). The root-level CI workflow packages the app, runs unit plus targeted integration tests, then verifies that removing the fix causes the expected duplicate-order assertion failure. Nested upstream workflows in jpetstore/.github/ are reference material, not active repository workflows.
+The repeat-purchase test has been tightened to reuse the same session and check order, line-item and inventory effects. The changed test passed in [fresh CI](https://github.com/Born2tweak/ibm-bob-jpetstore-hackathon/actions/runs/38985945644). The root-level CI workflow packages the app, runs unit plus targeted integration tests, then verifies that removing the fix causes the expected duplicate-order assertion failure. Nested upstream workflows in jpetstore/.github/ are reference material, not active repository workflows.
 
 ## Immediate work, in order
 

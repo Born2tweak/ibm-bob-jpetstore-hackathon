@@ -89,7 +89,7 @@ The full browser journey, concurrent confirmation requests, and a live deploymen
 
 ### Fresh GitHub CI results
 
-Tested application/workflow revision: b2cec101e03fa6cd780b324f55b91429fa022821. [Run 38985945644](https://github.com/Born2tweak/ibmi-cobol-hackathon/actions/runs/38985945644), October 16 EDT / October 17 UTC.
+Tested application/workflow revision: b2cec101e03fa6cd780b324f55b91429fa022821. [Run 38985945644](https://github.com/Born2tweak/ibm-bob-jpetstore-hackathon/actions/runs/38985945644), October 16 EDT / October 17 UTC.
 
 The first CI attempt used JDK 17 and stopped at the inherited Enforcer's Java-version check before tests ran. The workflow was corrected to JDK 21 and setup-java v5; the application POM and production code were not changed.
 
