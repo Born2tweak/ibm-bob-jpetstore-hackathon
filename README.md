@@ -1,57 +1,39 @@
-# IBM Bob hackathon: JPetStore
+# IBM Bob Hackathon — JPetStore
 
-**Active submission application:** [JPetStore](jpetstore/README.md), imported from
-[mybatis/jpetstore-6](https://github.com/mybatis/jpetstore-6) at commit
-`1ffdf1e91b62aa32abfc4511f548c9bdc84b9bbf`. The imported code remains
-upstream code under its own [LICENSE](jpetstore/LICENSE) and
-[NOTICE](jpetstore/NOTICE). The import and these planning documents are Codex
-preparation, not IBM Bob work. No Bob-assisted fix or feature is claimed yet.
+A hackathon project using IBM Bob to understand and change an unfamiliar, established Java application, with tests that demonstrate whether the change is trustworthy.
 
-Open this repository in Bob, then work in `jpetstore/`. See
-[HACKATHON.md](HACKATHON.md), [SPEC.md](SPEC.md), and
-[VERIFICATION.md](VERIFICATION.md) for scope and evidence.
+## Current project
 
-## Prior IBM i exploration
+- **Application:** [MyBatis JPetStore 6](jpetstore/README.md), imported from [mybatis/jpetstore-6](https://github.com/mybatis/jpetstore-6) at `1ffdf1e91b62aa32abfc4511f548c9bdc84b9bbf`.
+- **Confirmed issue:** replaying order confirmation in the same session inserted a duplicate order and decremented inventory again.
+- **Fix:** clear the session's pending order after successful insertion.
+- **Regression evidence:** two database-backed integration tests cover replay rejection and a legitimate later order. The recorded run passed 2/2; the recorded Surefire suite passed 98/98. Both were run October 14; rerun before submission.
+- **Feature:** no separate feature is implemented yet. Check the hackathon requirements before adding scope.
+- **Bob provenance:** see [BOB_WORKLOG.md](BOB_WORKLOG.md). Record what Bob actually did from session evidence; do not infer tool attribution from the commit alone.
 
-The existing IBM i COBOL examples and their Git history remain below. They
-were an earlier hackathon direction and are not the active submission app.
+## Start here
 
-This repository began as a
-[fork of Jack Woehr's examples](https://github.com/jwoehr/ibmi-cobol-examples).
-The original examples and their history remain under the root Apache 2.0
-license. The following sections describe that prior IBM i work.
+1. Read [HACKATHON.md](HACKATHON.md) for scope and submission status.
+2. Read [ARCHITECTURE.md](ARCHITECTURE.md) for the app and checkout flow.
+3. Read [SPEC.md](SPEC.md) for the confirmed fix and open feature decision.
+4. Read [VERIFICATION.md](VERIFICATION.md) for exact commands and historical results.
+5. Open this repository in Bob and use `jpetstore/` as the active application.
 
-Examples of programming COBOL on the [IBM i](https://www.ibm.com/products/ibm-i) platform using [IBM Bob](https://bob.ibm.com/) agentic code assist - **These are examples, and are not production code**. See LICENSE for limit of liability.
+From PowerShell, in `jpetstore/`:
 
-## Purpose of the project
+```powershell
+.\mvnw.cmd test
+.\mvnw.cmd test-compile failsafe:integration-test failsafe:verify -Dit.test=OrderControllerDuplicateOrderIT -Dcargo.skip=true
+.\mvnw.cmd clean package
+.\mvnw.cmd cargo:run -P tomcat9
+```
 
-This project demonstrates usage of agentic code assist to code modern COBOL projects on IBM i. The author's intent is to continue to add examples based on the original content.
+The app is expected at http://localhost:8080/jpetstore/.
 
-It is focused on the mechanics of writing modern ILE COBOL rather than useful tools. These are examples of technique rather than of content.
+## Repository layout
 
-## Contents of the project
+- `jpetstore/` — active Java web application and its tests.
+- `picclaus/`, `cobolinfo/`, and related planning files — Jack Woehr's original IBM i COBOL examples, preserved as background/reference material.
+- `ARCHITECTURE.md`, `SPEC.md`, `VERIFICATION.md`, `HACKATHON.md` — project map and evidence.
 
-### `picclaus`
-
-This ILE COBOL program + display file project provides a TN5250 "green screen" application which allows the user to scroll through a list of allowable COBOL `PICTURE` clauses.
-
-### `cobolinfo`
-
-This ILE COBOL program + service program + display file project extends the `picclaus` application a TN5250 "green screen" application in 2 ways:
-
-1. It extracts the content displayed by the program into a service program called by the main application program.
-1. It adds a second mode which allows the user to scroll through a list of allowable COBOL verbs.
-
-## Usage
-
-- Deploy this project as a workspace to the IFS of your IBM i.
-  - `IBM i: Deploy workspace` in IBM Bob.
-- Execute the desired `Makefile` to build and install the application in the library of your choice.
-
-See the individual `Makefile`s for more information on the particular programs.
-
-## Future direction
-
-The author plans to wrap the service program entries as web APIs.
-
-- _Jack Woehr, Beulah, Colorado, 2026-09-20_
+The repository began as a fork of [Jack Woehr's IBM i COBOL examples](https://github.com/jwoehr/ibmi-cobol-examples). Those examples and their Apache 2.0 license remain intact. JPetStore is separately distributed under its included Apache 2.0 license and notice.
