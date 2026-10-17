@@ -62,3 +62,26 @@ No other production source files were modified by this fix.
 ```
 
 The production change is one line in one file. The accompanying regression test and test configuration are new files. This record and `SPEC.md` document the work; all five files are included in the fix commit.
+
+
+---
+
+## October 16, 2026 (EDT) — independent review and fresh execution attempt
+
+Reviewed app revision: c6c2cfca405660d70760f0812cb536cf69624810, before the test changes in this audit. An independent read-only review confirmed the production change against import baseline 2844bec6 was exactly one line and correct for sequential replay after successful insertion.
+
+Evidence precision: the historical red run stopped at the duplicate ORDERS assertion. It did not reach the later LINEITEM/inventory assertions. The successful fixed-code run checked all those assertions. These are direct-controller/database integration tests, not HTTP/browser tests.
+
+The review found that the legitimate repeat-purchase check used a new session. The test now reuses the original session and asserts one additional order, one additional line item, and one additional inventory decrement. Stale test comments were corrected. No production code was changed by this audit.
+
+Fresh local command attempted from jpetstore/:
+
+~~~sh
+sh mvnw -B test-compile failsafe:integration-test failsafe:verify -Dit.test=OrderControllerDuplicateOrderIT
+~~~
+
+Result: blocked before Maven startup by java.net.UnknownHostException: repo.maven.apache.org while downloading Maven. No tests executed, so this is not a fresh pass or a product-test failure.
+
+A root .github/workflows/checkout-regression.yml workflow was prepared to package the app and run the full unit suite plus the two targeted regression tests, then check that removing only the production cleanup line causes the expected replay assertion failure. This sensitivity check changes source only inside its disposable CI runner. Run status must be observed before claiming that workflow passed.
+
+The full browser journey, concurrent confirmation requests, and a live deployment remain unverified.

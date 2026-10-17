@@ -1,0 +1,89 @@
+name: Checkout regression
+
+on:
+  push:
+    branches: [main, prep/jpetstore-bob]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checkout-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: jpetstore
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: jpetstore/pom.xml
+
+      - name: Package app and run unit plus checkout regression tests
+        run: sh mvnw -B clean package failsafe:integration-test failsafe:verify -Dit.test=OrderControllerDuplicateOrderIT
+
+      - name: Preserve fixed-code test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fixed-code-test-reports
+          path: |
+            jpetstore/target/surefire-reports/
+            jpetstore/target/failsafe-reports/
+          if-no-files-found: warn
+
+      - name: Verify regression detects removal of the fix
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          import subprocess
+          import shutil
+          import xml.etree.ElementTree as ET
+
+          controller = Path("src/main/java/org/mybatis/jpetstore/web/controllers/OrderController.java")
+          source = controller.read_text()
+          cleanup = '        session.removeAttribute("order");'
+          assert source.count(cleanup) == 1, "Expected exactly the scoped session-cleanup line"
+          controller.write_text(source.replace(cleanup + "\n", "", 1))
+
+          reports = Path("target/failsafe-reports")
+          report = reports / "TEST-org.mybatis.jpetstore.web.controllers.OrderControllerDuplicateOrderIT.xml"
+          report.unlink(missing_ok=True)
+          result = subprocess.run([
+              "sh", "mvnw", "-B", "test-compile",
+              "failsafe:integration-test", "failsafe:verify",
+              "-Dit.test=OrderControllerDuplicateOrderIT",
+          ])
+          assert result.returncode != 0, "Regression did not reject the unfixed controller"
+          assert report.exists(), "Build failed without a fresh regression report"
+          snapshot = Path("target/sensitivity-reports")
+          snapshot.mkdir(exist_ok=True)
+          shutil.copy2(report, snapshot / report.name)
+          suite = ET.parse(report).getroot()
+          cases = suite.findall("testcase")
+          assert len(cases) == 2, "Both regression cases must execute"
+          failures = [case for case in cases if case.find("failure") is not None]
+          errors = [case for case in cases if case.find("error") is not None]
+          skipped = [case for case in cases if case.find("skipped") is not None]
+          assert not errors and not skipped, "Expected assertion failure, not infrastructure errors or skipped tests"
+          assert len(failures) == 1, "Expected only replay regression to fail"
+          assert failures[0].get("name") == "replayConfirmPostInSameSessionMustNotInsertDuplicateOrder"
+          failure_text = ET.tostring(failures[0].find("failure"), encoding="unicode")
+          assert "Second confirm POST must NOT insert another order row" in failure_text
+          print("Sensitivity verified: removing the fix causes the expected duplicate-order assertion failure.")
+          PYCODE
+
+      - name: Preserve expected-failure regression reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sensitivity-test-reports
+          path: jpetstore/target/sensitivity-reports/
+          if-no-files-found: warn

@@ -43,15 +43,14 @@ import org.springframework.ui.Model;
 /**
  * Regression test for the repeated-confirmation duplicate-order defect.
  * <p>
- * The confirmed POST to /order/new uses session["order"] to drive insertOrder. Because the controller never removes
- * session["order"] after a successful insert, a second POST with confirmed=true replays the insert with a fresh
+ * The confirmed POST to /order/new uses session["order"] to drive insertOrder. Before the fix, the controller left
+ * session["order"] after a successful insert, so a second confirmation replayed the insert with a fresh
  * sequence number, creating a second order row and decrementing inventory a second time.
  * <p>
  * This test uses the real embedded HSQLDB (via MapperTestContext) so that ORDERS, LINEITEM and INVENTORY row counts and
- * values are verified against the actual database state, not mocked return values. It is deliberately written against
- * the UNFIXED controller so that it fails as a regression gate. When the fix is applied the test must pass.
- * <p>
- * This is IBM Bob investigation work (October 2026).
+ * values are verified against actual database state. Controller methods are invoked directly: this does not exercise
+ * HTTP dispatch, form binding, JSP rendering, or a browser. The replay check fails without session cleanup and passes
+ * with it.
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = { MapperTestContext.class, OrderServiceTestConfig.class })
@@ -156,7 +155,7 @@ class OrderControllerDuplicateOrderIT {
    * ACTUAL (unfixed baseline): second POST succeeds, producing a second ORDERS row and a second LINEITEM row; inventory
    * decremented by 2.
    * <p>
- * This test failed against the unfixed baseline because the second confirmation inserted another order.
+   * This test failed against the unfixed baseline because the second confirmation inserted another order.
    */
   @Test
   void replayConfirmPostInSameSessionMustNotInsertDuplicateOrder() {
@@ -186,7 +185,7 @@ class OrderControllerDuplicateOrderIT {
     assertThat(lineItemsAfterFirst).as("Exactly one line-item row after first confirm").isEqualTo(lineItemsBefore + 1);
     assertThat(invAfterFirst).as("Inventory decremented by 1 after first confirm").isEqualTo(invBefore - 1);
 
-    // ── second confirmation POST (replay — session["order"] still present) ─
+    // Replay after the first confirmation completes.
     Model model2 = new ExtendedModelMap();
     String view2 = orderController.newOrder(new Order(), false, true, session, model2);
 
@@ -215,7 +214,7 @@ class OrderControllerDuplicateOrderIT {
    * This guards that the fix does not block valid repeat purchases.
    */
   @Test
-  void secondLegitimateOrderInNewSessionCycleIsAccepted() {
+  void secondLegitimateOrderInSameSessionIsAccepted() {
     AccountController.AccountSession accountSession = buildAccountSession();
 
     // ── First complete purchase ────────────────────────────────────────────
@@ -223,11 +222,13 @@ class OrderControllerDuplicateOrderIT {
     orderController.newOrder(new Order(), false, true, session1, new ExtendedModelMap());
 
     int ordersAfterFirst = jdbc.queryForObject("SELECT COUNT(*) FROM ORDERS", Integer.class);
+    int lineItemsAfterFirst = jdbc.queryForObject("SELECT COUNT(*) FROM LINEITEM", Integer.class);
+    int inventoryAfterFirst = jdbc.queryForObject("SELECT QTY FROM INVENTORY WHERE ITEMID = 'EST-1'", Integer.class);
 
     // ── Second legitimate purchase: fresh /order/new cycle ─────────────────
     // After first confirm the cart is reset; simulate a new add-to-cart + checkout.
     Cart cart2 = buildCartWithEst1();
-    HttpSession session2 = new MockHttpSession();
+    HttpSession session2 = session1;
     session2.setAttribute("accountBean", accountSession);
     session2.setAttribute("cart", cart2);
     orderController.newOrderForm(session2, new ExtendedModelMap());
@@ -252,5 +253,9 @@ class OrderControllerDuplicateOrderIT {
     int ordersAfterSecond = jdbc.queryForObject("SELECT COUNT(*) FROM ORDERS", Integer.class);
     assertThat(ordersAfterSecond).as("Legitimate second purchase must add exactly one more order row")
         .isEqualTo(ordersAfterFirst + 1);
+    assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM LINEITEM", Integer.class))
+        .as("Legitimate second purchase must add one line item").isEqualTo(lineItemsAfterFirst + 1);
+    assertThat(jdbc.queryForObject("SELECT QTY FROM INVENTORY WHERE ITEMID = 'EST-1'", Integer.class))
+        .as("Legitimate second purchase must decrement inventory once").isEqualTo(inventoryAfterFirst - 1);
   }
 }

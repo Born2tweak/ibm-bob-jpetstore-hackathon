@@ -7,13 +7,13 @@ A submission for the IBM Bob Hackathon, centered on a verified change to an unfa
 - **Application:** [MyBatis JPetStore 6](jpetstore/README.md), imported from [mybatis/jpetstore-6](https://github.com/mybatis/jpetstore-6) at `1ffdf1e91b62aa32abfc4511f548c9bdc84b9bbf`.
 - **Confirmed issue:** replaying order confirmation in the same session inserted a duplicate order and decremented inventory again.
 - **Fix:** clear the session's pending order after successful insertion.
-- **Regression evidence:** two database-backed integration tests cover replay rejection and a legitimate later order. The recorded run passed 2/2; the recorded Surefire suite passed 98/98. Both were run October 14; rerun before submission.
-- **Feature:** no separate feature is implemented yet. Check the hackathon requirements before adding scope.
+- **Regression evidence:** direct-controller/database tests cover sequential replay. Historical October 14 runs passed 2/2 targeted tests and 98/98 unit tests. The repeat-purchase test has since been tightened to reuse the same session; its new result is pending. HTTP/browser and concurrent behavior are not established by these tests.
+- **Feature:** required by the student track and still missing. See the readiness gates and bounded recommendation in [HACKATHON.md](HACKATHON.md).
 - **Bob provenance:** see [BOB_WORKLOG.md](BOB_WORKLOG.md). Record what Bob actually did from session evidence; do not infer tool attribution from the commit alone.
 
 ## Start here
 
-1. Read [HACKATHON.md](HACKATHON.md) for scope and submission status.
+1. Read [HACKATHON.md](HACKATHON.md) for the current readiness audit, official requirements, and build gaps.
 2. Read [ARCHITECTURE.md](ARCHITECTURE.md) for the app and checkout flow.
 3. Read [SPEC.md](SPEC.md) for the confirmed fix and open feature decision.
 4. Read [VERIFICATION.md](VERIFICATION.md) for exact commands and historical results.
