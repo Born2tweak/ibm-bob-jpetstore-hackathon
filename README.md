@@ -1,6 +1,6 @@
 # IBM Bob Hackathon — JPetStore
 
-A hackathon project using IBM Bob to understand and change an unfamiliar, established Java application, with tests that demonstrate whether the change is trustworthy.
+A submission for the IBM Bob Hackathon, centered on a verified change to an unfamiliar, established Java application. Bob's specific contribution is recorded only where session evidence supports it.
 
 ## Current project
 
