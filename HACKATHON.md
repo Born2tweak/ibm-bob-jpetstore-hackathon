@@ -1,64 +1,44 @@
-# Building with IBM Bob: project record
+# Hackathon readiness audit
 
-## Current scope
+Reviewed October 16, 2026 (EDT). Active application: JPetStore in jpetstore/. Active branch: prep/jpetstore-bob. Deadline: October 18 at 11:59 PM EDT.
 
-- **Track:** Students / Early Career — Explore, Fix, and Build.
-- **Starting application:** `picclaus`, then `cobolinfo` if the team can run the baseline.
-- **Upstream:** [jwoehr/ibmi-cobol-examples](https://github.com/jwoehr/ibmi-cobol-examples).
-- **Hackathon changes:** None yet. The issue, fix, and feature remain to be chosen after baseline execution.
-- **IBM Bob use:** Not yet recorded. Future claims about Bob's contribution must be backed by the team's actual work.
+## Verdict
 
-This repository preserves the upstream examples and their commit history. The examples are starting material, not the team's completed hackathon work.
+The Java application fits the student track's unfamiliar-application direction. The sequential duplicate-confirmation fix is a credible, bounded maintenance change. The current entry is incomplete: a useful feature, live app verification, and Bob workflow evidence are still missing. Passing this regression alone does not establish a complete or competitive submission.
 
-## Preliminary plan (October 9)
+## Requirement and rubric map
 
-1. **Establish access and an unchanged baseline.** Confirm the IBM i host, assigned library, ILE COBOL compiler, PASE `make`, and Bob access. Build and run `picclaus` without changing it. If PUB400 remains unavailable, seek another authorized IBM i environment before claiming runtime results.
-2. **Use Bob to understand the application.** Ask Bob focused questions about the DDS screen, COBOL input loop, and how `cobolinfo` extends `picclaus`. Check its answers against source and observed behavior. Save the prompt, useful output, and any human correction.
-3. **Select a reproducible issue.** Record expected versus observed behavior, reproduction steps, and a check that fails before the fix. Confirm with organizers what they mean by a "seeded issue" before treating an arbitrary improvement as one.
-4. **Fix, then add one bounded feature.** Ask Bob for a scoped proposal, review the diff, compile on IBM i, and exercise the affected 5250 behavior. A faster way to find a clause is one possible feature hypothesis, not a commitment; first confirm the baseline and check that existing `cobolinfo` does not already solve the need.
-5. **Prepare the judge path.** Resolve how a 5250 application can satisfy the required live working environment URL. If that cannot be met, choose a project scope that can be demonstrated live before investing in a larger implementation.
+Sources: [official event page](https://hackathon.angelhack.com/web/events/building-with-ibm-bob) and [IBM event page](https://developer.ibm.com/events/building-with-ibm-bob-angelhack-x-ibm-virtual-hackathon/), checked October 16.
 
-The team should ask the October 9 mentor/organizer AMA about the seeded-issue definition and acceptable live-demo access. The event's [submission requirements](https://hackathon.angelhack.com/web/events/building-with-ibm-bob) make both questions consequential.
+| Area | Current evidence | Remaining gate |
+|---|---|---|
+| Explore, Fix, and Build student track | Existing JPetStore application; reproduced issue and committed fix | Implement one useful feature; documenting the fix alone does not satisfy the build step |
+| Bob adoption (30%) | Bob was configured and used according to the team conversation | Record actual Bob prompts/actions, human corrections, commits and outcomes in BOB_WORKLOG.md |
+| Relevance/innovation (30%) | Concrete repeated-business-effect problem | Demonstrate a related useful capability and explain its user value |
+| Functionality/execution (30%) | Fresh JDK 21 CI: 98 unit tests, 2 targeted integration tests and WAR packaging passed; removing the fix caused the expected assertion failure | Real HTTP/browser checkout and externally accessible live app |
+| Clarity (10%) | README and architecture map exist | Align the final story with observed behavior and actual Bob contribution |
+| Submission package | Source, spec and historical verification in GitHub | Live URL, PDF deck, YouTube video at most 3 minutes, description at most 100 words, track/stack, in-window improvements |
 
-## Bob workflow and usage evidence
+The separate linked rules document could not be retrieved. Full terms/rule coverage and the team's registrations remain unverified. The public track text says a seeded issue; this project fixes a discovered upstream issue. Keep that distinction honest and check organizer guidance if no clarification already exists.
 
-Jack Woehr's [keynote](https://www.youtube.com/watch?v=KyP3dkqWtu0) recommends small, clearly defined tasks and human evaluation of agent output. He describes rules, skills, hooks, and MCP as available ways to customize Bob, not as required project components. Use them only when they solve a concrete problem in this repo.
+## Engineering scope
 
-For each meaningful Bob-assisted change, record: the task and prompt, Bob's proposal, what the team accepted or corrected, the commit, and the observed verification result. This supports the event's 30% Bob-adoption criterion without claiming that upstream code or unaided work was created by Bob.
+The production diff against the imported baseline is exactly one added line: remove the pending session order after successful insertion. Schema, SQL, pricing, inventory policy and backorders are unchanged.
 
-Check the team's actual Bobcoin balance before substantial sessions and track balance changes after them. IBM's [Bobcoin documentation](https://bob.ibm.com/docs/shell/account/bobcoins) lists 180 monthly coins for a standard Pro+ plan, but that does not establish this team's available balance or hackathon allocation. Keep requests narrow and preserve capacity for debugging and the demo. Do not enable paid overages without a separate decision.
+The regression invokes controller methods directly using MockHttpSession and the real transaction-managed service/MyBatis/HSQLDB. It checks sequential replay after the first request completes. It does not test servlet dispatch, form binding, JSP rendering, browser behavior, or simultaneous confirmations. Do not claim general idempotency or concurrent double-submit protection.
 
-## Baseline build and test
+The repeat-purchase test has been tightened to reuse the same session and check order, line-item and inventory effects. The changed test passed in [fresh CI](https://github.com/Born2tweak/ibm-bob-jpetstore-hackathon/actions/runs/38985945644). The root-level CI workflow packages the app, runs unit plus targeted integration tests, then verifies that removing the fix causes the expected duplicate-order assertion failure. Nested upstream workflows in jpetstore/.github/ are reference material, not active repository workflows.
 
-The following procedure comes from the upstream `picclaus` documentation. It has **not yet been executed by this team**.
+## Immediate work, in order
 
-1. Obtain an IBM i account with ILE COBOL and PASE `make`, and identify an existing library assigned to that account. Do not use `QGPL` on PUB400.
-2. Deploy this repository to the IBM i IFS, then enter the `picclaus` directory in a PASE shell.
-3. Run `make all LIB=<YOUR_LIBRARY>`, substituting the actual library name.
-4. In a 5250 session, run `CALL <YOUR_LIBRARY>/PICCLAUS`.
-5. Record the build output and observe the first page, PageDown, PageUp, and F3 behavior. Record failures before changing the source.
+1. CI is green for the updated test. Perform a real checkout, replay, and another checkout in the same browser session; direct-method tests do not replace this.
+2. Complete one useful feature. A bounded candidate is recoverable cart-quantity validation: explain invalid input beside the item, retain the prior quantity, allow correction, and preserve the existing below-one removal/backorder behavior. Current source silently ignores nonnumeric input. This is a recommendation, not implemented scope.
+3. Deploy the tested application and check the live flow externally.
+4. Capture actual Bob session evidence. The event page advertises participant Pro+ access during the hackathon; verify redemption with the organizers if the account is still limited to the exhausted trial allowance.
+5. Prepare presentation assets after these build/compliance gaps are closed.
 
-The upstream [picclaus README](picclaus/README.md) and [Makefile](picclaus/Makefile) provide the source-specific details. The build requires IBM i and cannot be validated by inspecting the source on Windows.
+## Provenance and links
 
-## Verification record
+JPetStore was imported from mybatis/jpetstore-6 at 1ffdf1e91b62aa32abfc4511f548c9bdc84b9bbf. The fix is in 192da5039c666c19f3542c0602abe01b44fa18c5. Original IBM i examples remain reference material. Preserve both sets of licenses and the JPetStore notice.
 
-| Item | Status | Evidence to add |
-| --- | --- | --- |
-| IBM i login and assigned library | Pending | Password-free session capture and library name |
-| Unmodified picclaus build | Pending | Compiler output and created objects |
-| Unmodified picclaus run | Pending | 5250 screen capture and key behavior |
-| Reproduced issue | Pending | Steps, expected behavior, observed behavior |
-| Fix and useful feature | Pending | Commits, Bob contribution, human review, checks |
-| Live environment for judges | Pending | Accessible URL and access instructions |
-
-PUB400 was unreachable from this workstation and several external probes on October 9, 2026. This is an environment blocker, not evidence that the example fails to build.
-
-## Submission checklist
-
-- Explain what the team learned about the unfamiliar application.
-- Declare only improvements made during the September 28–October 18, 2026 build period.
-- Include the reproducible issue, fix, useful feature, and verification evidence.
-- Include deployment and testing instructions that judges can follow.
-- Add the project description (100 words or fewer), stack, team details, PDF deck, YouTube demo (3 minutes or fewer), and live working environment URL.
-
-The [event page](https://hackathon.angelhack.com/web/events/building-with-ibm-bob) lists the submission requirements and October 18, 2026, 11:59 p.m. EDT deadline. The team should verify its final submission against the event's linked rules before submitting.
+See ARCHITECTURE.md, SPEC.md, VERIFICATION.md and BOB_WORKLOG.md. The default branch remains stale until PR #1 is merged or the active branch is made the submission target.
