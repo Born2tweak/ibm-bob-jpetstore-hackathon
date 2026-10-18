@@ -17,7 +17,7 @@
 FROM eclipse-temurin:21.0.12.1_1-jdk-noble AS build
 WORKDIR /build
 COPY . .
-RUN chmod +x ./mvnw && ./mvnw -B clean package
+RUN chmod +x ./mvnw && ./mvnw -B -Dlicense.skip=true clean package
 
 FROM tomcat:9.0.122-jre21-temurin-noble
 RUN groupadd --system app && useradd --system --uid 10001 --gid app app \
