@@ -50,7 +50,12 @@
                         <td>${cartItem.item.attribute1} ${cartItem.item.attribute2} ${cartItem.item.attribute3} ${cartItem.item.attribute4}
                             ${cartItem.item.attribute5} ${cartItem.item.product.name}</td>
                         <td>${cartItem.inStock}</td>
-                        <td><input type="text" size="3" name="${cartItem.item.itemId}" value="${cartItem.quantity}" /></td>
+                        <td>
+                            <input type="text" size="3" name="${cartItem.item.itemId}" value="${cartItem.quantity}" />
+                            <c:if test="${not empty quantityErrors[cartItem.item.itemId]}">
+                                <span class="cart-qty-error" style="color:red;font-size:0.85em;display:block"><c:out value="${quantityErrors[cartItem.item.itemId]}"/></span>
+                            </c:if>
+                        </td>
                         <td>$<fmt:formatNumber value="${cartItem.item.listPrice}" pattern="#,##0.00" /></td>
                         <td>$<fmt:formatNumber value="${cartItem.total}" pattern="#,##0.00" /></td>
                         <td><a class="Button" href="${pageContext.request.contextPath}/cart/removeItem?workingItemId=${cartItem.item.itemId}">Remove</a></td>

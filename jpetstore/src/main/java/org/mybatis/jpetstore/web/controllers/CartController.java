@@ -15,7 +15,11 @@
  */
 package org.mybatis.jpetstore.web.controllers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -141,6 +145,11 @@ public class CartController {
 
   /**
    * Update cart quantities.
+   * <p>
+   * Each item is processed independently. A blank, non-numeric, or integer-overflow quantity retains the item's
+   * previous quantity and records an item-specific error message in the {@code quantityErrors} model attribute (a
+   * {@code Map<String,String>} keyed by item ID). A valid positive quantity updates normally. A quantity less than one
+   * removes the item, preserving the existing removal behaviour.
    *
    * @param request
    *          the request
@@ -154,21 +163,37 @@ public class CartController {
   @PostMapping("/update")
   public String updateCartQuantities(HttpServletRequest request, HttpSession session, Model model) {
     Cart cart = getCart(session);
+    Map<String, String> quantityErrors = new HashMap<>();
+    List<String> toRemove = new ArrayList<>();
     Iterator<CartItem> cartItems = cart.getAllCartItems();
     while (cartItems.hasNext()) {
       CartItem cartItem = cartItems.next();
       String itemId = cartItem.getItem().getItemId();
+      String param = request.getParameter(itemId);
+      if (param == null || param.trim().isEmpty()) {
+        quantityErrors.put(itemId, "Please enter a valid quantity.");
+        continue;
+      }
       try {
-        int quantity = Integer.parseInt(request.getParameter(itemId));
+        int quantity = Integer.parseInt(param.trim());
         cart.setQuantityByItemId(itemId, quantity);
         if (quantity < 1) {
-          cartItems.remove();
+          toRemove.add(itemId);
         }
       } catch (NumberFormatException e) {
-        // ignore invalid numeric input on purpose
+        quantityErrors.put(itemId, "Please enter a valid whole number for the quantity.");
       }
     }
+    // Remove after iteration to avoid ConcurrentModificationException and to
+    // ensure removeItemById cleans up both itemMap and itemList (fixing the
+    // stale-map bug that would surface if the item is re-added later).
+    for (String itemId : toRemove) {
+      cart.removeItemById(itemId);
+    }
     model.addAttribute("cart", cart);
+    if (!quantityErrors.isEmpty()) {
+      model.addAttribute("quantityErrors", quantityErrors);
+    }
     return "cart/Cart";
   }
 
