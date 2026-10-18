@@ -1,5 +1,7 @@
 # Hackathon readiness audit
 
+> **Current status, October 18:** The dated audit below predates PR #2 and the public deployment. The collaborative team has the merged Bob-assisted cart validation feature (`62ad28f`), a live [Render demo](https://ibm-bob-jpetstore-hackathon.onrender.com/jpetstore/), and public browser evidence for invalid/valid cart input, checkout, and same-session repeat confirmation. See [BOB_WORKLOG.md](BOB_WORKLOG.md) and [VERIFICATION.md](VERIFICATION.md). Submission assets and the AngelHack submission receipt remain to be completed; the historical "missing" gates below are superseded. The app uses in-memory HSQLDB, so orders can reset on restart.
+
 Reviewed October 16, 2026 (EDT). Active application: JPetStore in jpetstore/. Active branch: prep/jpetstore-bob. Deadline: October 18 at 11:59 PM EDT.
 
 ## Verdict

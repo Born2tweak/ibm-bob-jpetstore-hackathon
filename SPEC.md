@@ -1,5 +1,7 @@
 # Preliminary JPetStore specification
 
+> **Current addendum, October 18:** The cart quantity feature proposed below was implemented with IBM Bob assistance in PR #2 and merged as `62ad28f`. Invalid blank, nonnumeric, and overflowing quantities now show an item-specific escaped message and retain the previous value. Valid quantities update; zero and negative quantities remove the item from both cart structures. Nine new tests cover these cases, including mixed valid/invalid updates and remove/re-add. The deployed browser accepted `abc` as an invalid test input, kept the $16.50 subtotal, then accepted quantity 2 and showed $33.00. The original candidate and provisional wording below document the earlier decision stage.
+
 ## Goal and provenance
 
 Use the unchanged MyBatis JPetStore 6 import (`mybatis/jpetstore-6` at `1ffdf1e91b62aa32abfc4511f548c9bdc84b9bbf`) as the submission baseline. This document is Codex preparation for IBM Bob, not Bob output. Preserve the original app behavior unless a reproducible issue and agreed expected behavior justify a change.
