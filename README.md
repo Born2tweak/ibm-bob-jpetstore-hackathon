@@ -20,6 +20,7 @@ A collaborative submission for the IBM Bob Hackathon, centered on a checkout fix
 3. Read [SPEC.md](SPEC.md) for the original issue specification and current addendum.
 4. Read [VERIFICATION.md](VERIFICATION.md) for exact commands and historical results.
 5. Open this repository in Bob and use `jpetstore/` as the active application.
+6. Use [DEMO_RUNBOOK.md](DEMO_RUNBOOK.md) for the short video and [SUBMISSION_DRAFT.md](SUBMISSION_DRAFT.md) for the track, stack, and description.
 
 Use JDK 21 for this build (the inherited Maven Enforcer rejects JDK 17). From PowerShell, in `jpetstore/`:
 

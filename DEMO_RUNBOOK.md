@@ -16,8 +16,8 @@ The recording must be **at most three minutes**, prerecorded, uploaded to YouTub
 1. Open a fresh browser session and confirm the live site, catalog, sign-in, and cart load. If the free instance restarted, wait for the cold start and reset state.
 2. Open the repository README and `BOB_WORKLOG.md` in separate tabs. Use readable browser zoom. Hide private bookmarks, account menus, and desktop notifications.
 3. Rehearse the click path once. Use the seeded `j2ee` demo account. Do not show or enter real payment data.
-4. Record at 1080p or a readable browser resolution. Keep the cursor still while speaking. Stop below 3:00 and watch the exported file once for readable error text, order total, audio, and accidental private content.
-5. Upload to YouTube with a judge-accessible visibility setting. Open the final link in a signed-out browser to verify access. Put the link in the repository and AngelHack form.
+4. On Windows, open **Clipchamp** and choose **Record & create > Screen**. Select the microphone, start recording, choose the browser window, and narrate the table above. Microsoft's [screen recording instructions](https://support.microsoft.com/en-us/clipchamp/how-to-make-a-screen-recording) describe the window and microphone selection. Export at 1080p or another readable resolution. Stop below 3:00 and watch the export once for readable error text, order total, audio, and accidental private content.
+5. Upload the file in [YouTube Studio](https://support.google.com/youtube/answer/57407). Set visibility to **Unlisted** or **Public**; [YouTube says](https://support.google.com/youtube/answer/157177) anyone with an Unlisted link can watch without a Google account. Open the final link in a signed-out browser to verify access. Put that exact link in the repository and AngelHack form.
 
 ## Source and claim boundaries
 
