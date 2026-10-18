@@ -1,5 +1,14 @@
 # Verification record
 
+## October 18, 2026 (EDT) — merged feature and public deployment
+
+- PR #2 merged to `main` as `62ad28fed5ad94647a8fd1a5c5fcc6d6b760227f`. The PR head passed the repository's `checkout-regression` CI. An independent local offline review build ran 107 Surefire tests and two targeted Failsafe tests successfully; the unmodified local Maven gate was blocked by a linked-worktree license-plugin Git metadata error and restricted dependency resolution. See the PR and [BOB_WORKLOG.md](BOB_WORKLOG.md) for feature details and Bob attribution.
+- The Render free Docker service is live at https://ibm-bob-jpetstore-hackathon.onrender.com/jpetstore/. Deployed source is `chore/jpetstore-container` at `b4e8b86eca53e4fe73630492fa06befd876301c8`, which contains merged `main` at `62ad28f`. The remote Docker build packaged the WAR; Tomcat 9.0.122 started on Java 21.0.12.1.
+- Public browser flow: signed in as the seeded demo user, added EST-1, submitted `abc` as quantity, observed `Please enter a valid whole number for the quantity.` with quantity 1 and $16.50 subtotal retained. Submitted quantity 2 and observed $33.00 subtotal. Confirmed checkout and observed order #1000 for $33.00. Repeated **Confirm** from browser history in the same session; the response said `order was null`. **My Orders** still listed only #1000 for $33.00.
+- This is sequential same-session browser evidence. Concurrent POSTs and database persistence across Render free-instance restarts were not tested. The database is in memory and may reset on restart.
+
+---
+
 ## October 13, 2026 (EDT) — baseline smoke check
 
 Run from `jpetstore/` in the team repository on branch `prep/jpetstore-bob`.
