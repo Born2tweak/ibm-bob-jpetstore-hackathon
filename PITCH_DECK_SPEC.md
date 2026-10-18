@@ -6,13 +6,13 @@
 
 Make a five-slide, 16:9 PDF for the **Students / Early Career — Explore, Fix, and Build** track. The audience is AngelHack judges who may have only a few minutes. The deck must introduce the current team, explain the imported application and the two distinct improvements, show IBM Bob's actual role, ground the technical claims in evidence, and name realistic next steps. The companion [demo runbook](DEMO_RUNBOOK.md) covers the three-minute video; the deck should support that story rather than repeat every click.
 
-Current team line, supplied by the user on October 18: **Bloodhounds — Andrian Kolliegbo and Teaco Zinnah**. Recheck the portal roster before final export.
+**Roster reconciliation required:** the user supplied an intended team line of **Bloodhounds — Andrian Kolliegbo and Teaco Zinnah**. The signed-in AngelHack Team & Submission page still listed **three** members on October 18: Andrian (`akollie`, leader), Yoni Ghansah, and Teaco Zinnah. Use the final portal roster for the deck and submission after the team decides whether to retain or remove Yoni. No portal membership change was made while writing this spec.
 
 ## Slide-by-slide content
 
 | # | Slide title | On-slide copy and evidence | Visual direction |
 | --- | --- | --- | --- |
-| 1 | **JPetStore checkout reliability** | Subtitle: “A repeat confirmation creates one order. Bad cart input gets a useful answer.” Team: “Bloodhounds — Andrian Kolliegbo · Teaco Zinnah.” Track: “IBM Bob Hackathon · Explore, Fix, and Build.” | One large title on a dark navy field; team and track smaller. No stock artwork. |
+| 1 | **JPetStore checkout reliability** | Subtitle: “A repeat confirmation creates one order. Bad cart input gets a useful answer.” Team: “Bloodhounds” plus **the final roster shown in AngelHack**; the user-proposed two-name line remains pending reconciliation above. Track: “IBM Bob Hackathon · Explore, Fix, and Build.” | One large title on a dark navy field; team and track smaller. No stock artwork. |
 | 2 | **The checkout defect** | “The original app kept a pending order in the session after saving it. A second confirmation inserted another order and decremented inventory again.” Then, prominent fix: “Clear the pending session order after the successful insert.” Small scope note: “Verified for sequential confirmation in one session.” | Use a simple before/after sequence or one short code excerpt from `OrderController.java`. Attribute this fix separately from Bob's cart work. |
 | 3 | **Bob-assisted cart validation** | “IBM Bob explored the cart controller, cart model, JSP, and tests.” Show `abc` → inline item-specific error, prior quantity and subtotal retained; `2` → valid update and recalculated subtotal. Add: “Bob found and repaired a stale cart-map entry after removal. Nine new tests cover the feature.” | Prefer an authentic, cropped screenshot of the public cart's error state if available. Keep item ID, error, quantity, and subtotal visible together. |
 | 4 | **Public browser verification** | Four observed checkpoints: invalid `abc` → inline error and **$16.50** retained; quantity `2` → **$33.00** subtotal; checkout → one **$33.00** order; repeat Confirm in the same session → `order was null`, and My Orders still showed one order. | A compact evidence table or two authentic screenshots. Label this “October 18 public browser test.” Do not imply a persistent order number; the in-memory database can reset. |
@@ -27,7 +27,7 @@ Current team line, supplied by the user on October 18: **Bloodhounds — Andrian
 
 ## Final-deck acceptance check
 
-1. Confirm the exact AngelHack roster and spelling before export.
+1. Resolve the current two-name versus three-member portal roster discrepancy; confirm exact spelling before export.
 2. Build exactly five slides; export a PDF; inspect every slide at presentation size for wrapping and legibility.
 3. Check that all figures and wording match the dated verification record. Use only authentic app screenshots, with demo data and no personal tabs or account details.
 4. Open the PDF and its embedded GitHub/live links. Add the PDF to the public repository and check it can be opened while signed out.
